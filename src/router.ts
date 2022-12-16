@@ -4,7 +4,9 @@ const router = Router();
 
 //Product
 
-router.get("/product", () => {});
+router.get("/product", (req, res) => {
+  res.json({ message: "not quite" });
+});
 router.get("/product/:id", () => {});
 router.put("/product/:id", () => {});
 router.post("/product", () => {});
@@ -25,3 +27,5 @@ router.get("/updateinfo/:id", () => {});
 router.put("/updateinfo/:id", () => {});
 router.post("/updateinfo", () => {});
 router.delete("/updateinfo/:id", () => {});
+
+export { router };
