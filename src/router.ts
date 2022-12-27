@@ -1,7 +1,12 @@
 import { Router } from "express";
 import { body, oneOf, validationResult } from "express-validator";
 import { createProduct, getProduct, getProducts } from "./handlers/product";
-import { getUpdate, getUpdates } from "./handlers/update";
+import {
+  createUpdate,
+  getUpdate,
+  getUpdates,
+  updateUpdate,
+} from "./handlers/update";
 import { handleInputErrors } from "./modules/middleware";
 
 const router = Router();
@@ -35,6 +40,7 @@ router.put(
   body("body").optional(),
   body("status").isIn(["IN_PROGRESS", "SHIPPED", "DEPRECATED"]),
   handleInputErrors,
+  updateUpdate,
   () => {}
 );
 router.post(
@@ -42,6 +48,7 @@ router.post(
   body("title").exists(),
   body("body").exists(),
   handleInputErrors,
+  createUpdate,
   () => {}
 );
 router.delete("/update/:id", () => {});

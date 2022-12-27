@@ -3,23 +3,25 @@ import { prisma } from "../db";
 //Get all updates
 export const getUpdates = async (req, res) => {
   const id = req.params.id;
-  const updates = await prisma.update.findMany({
+  const products = await prisma.product.findMany({
     where: {
-      id,
+      belongsToId: req.user.id,
     },
     include: {
-      updateInfo: true,
+      update: true,
     },
   });
+  const updates = products.reduce((allUpdates, product) => {
+    return [...allUpdates, ...product.update];
+  }, []);
   res.json({ data: updates });
 };
 
 // Get single update
 export const getUpdate = async (req, res) => {
-  const id = req.params.id;
-  const update = await prisma.user.findUnique({
+  const update = await prisma.update.findUnique({
     where: {
-      id,
+      id: req.params.id,
     },
   });
   res.json({ data: update });
@@ -27,12 +29,48 @@ export const getUpdate = async (req, res) => {
 
 //Create update
 export const createUpdate = async (req, res) => {
-  const update = await prisma.update.create({
-    data: {
-      title: req.body.title,
-      body: req.body.body,
-      product: req.body.product,
+  const product = await prisma.product.findUnique({
+    where: {
+      id: req.body.productId,
     },
   });
+  if (!product) {
+    return res.json({ message: "Not a product" });
+  }
+
+  const update = await prisma.update.create({
+    data: req.body,
+  });
   res.json({ data: update });
+};
+
+// Update updates
+export const updateUpdate = async (req, res) => {
+  const id = req.params.id;
+  const products = await prisma.product.findMany({
+    where: {
+      belongsToId: req.user.id,
+    },
+    include: {
+      update: true,
+    },
+  });
+  const updates = products.reduce((allUpdates, product) => {
+    return [...allUpdates, ...product.update];
+  }, []);
+
+  const match = updates.find((update) => update.id === req.params.id);
+
+  if (!match) {
+    return res.json({ messsage: "Could not find productId to update" });
+  }
+
+  const updatedUpdate = await prisma.update.update({
+    where: {
+      id: req.params.id,
+    },
+    data: req.body,
+  });
+
+  res.json({ data: updatedUpdate });
 };
