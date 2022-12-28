@@ -54,7 +54,6 @@ router.post(
 router.delete("/update/:id", () => {});
 
 //Update points
-
 router.get("/updateinfo", () => {});
 router.get("/updateinfo/:id", body("id").isUUID(), () => {});
 router.put(
